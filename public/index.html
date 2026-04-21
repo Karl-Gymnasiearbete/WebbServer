@@ -11,6 +11,32 @@
   <p>Visitors: <span id="count">...</span></p>
   <p>Date & Time: <span id="datetime">...</span></p>
 
+  <!-- Bildspel -->
+  <div class="slideshow">
+    <div class="slide active">
+      <img src="Aurora.jpg" alt="Bild 1">
+    </div>
+    <div class="slide">
+      <img src="Flower 3.jpg" alt="Bild 2">
+    </div>
+        <div class="slide">
+      <img src="Moonlight.png"Bild 2">
+    </div>
+        <div class="slide">
+      <img src="Nebula-2.png" alt="Bild 2">
+    </div>
+
+    <button class="prev" onclick="changeSlide(-1)">&#8592;</button>
+    <button class="next" onclick="changeSlide(1)">&#8594;</button>
+
+    <div class="dots">
+      <span class="dot active" onclick="goToSlide(0)"></span>
+      <span class="dot" onclick="goToSlide(1)"></span>
+        <span class="dot" onclick="goToSlide(1)"></span>
+        <span class="dot" onclick="goToSlide(1)"></span>
+    </div>
+  </div>
+
   <script>
     fetch('/visitors')
       .then(res => res.json())
@@ -25,9 +51,32 @@
           document.getElementById('datetime').textContent = data.datetime;
         });
     }
-
     updateTime();
     setInterval(updateTime, 1000);
+
+    // Bildspel logik
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+
+    function showSlide(n) {
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = (n + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+    }
+
+    function changeSlide(n) {
+      showSlide(current + n);
+    }
+
+    function goToSlide(n) {
+      showSlide(n);
+    }
+
+    // Byt bild automatiskt var 4:e sekund
+    setInterval(() => changeSlide(1), 4000);
   </script>
 </body>
 </html>
