@@ -6,17 +6,21 @@
   border-radius: 10px;
 }
 
-.slide {
-  display: none;
+/* Wrapper som håller alla bilder i en rad */
+.slides-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
 }
 
-.slide.active {
-  display: block;
+.slide {
+  min-width: 100%;
 }
 
 .slide img {
   width: 100%;
   border-radius: 10px;
+  display: block;
+  height: 380px;
 }
 
 .prev, .next {
@@ -30,8 +34,8 @@
   cursor: pointer;
   font-size: 18px;
   border-radius: 5px;
+  z-index: 10;
 }
-
 .prev { left: 10px; }
 .next { right: 10px; }
 
@@ -39,7 +43,6 @@
   text-align: center;
   padding: 10px;
 }
-
 .dot {
   display: inline-block;
   width: 12px;
@@ -49,7 +52,6 @@
   border-radius: 50%;
   cursor: pointer;
 }
-
 .dot.active {
   background: #333;
 }
