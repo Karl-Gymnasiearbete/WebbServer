@@ -1,2 +1,0 @@
-# WebbServer
-Webbserver programmeringen :D
