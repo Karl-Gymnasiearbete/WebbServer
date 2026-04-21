@@ -6,9 +6,7 @@ app.use(express.static('public'));
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000');
 });
-const express = require('express');
 const fs = require('fs');
-const app = express();
 
 const COUNTER_FILE = 'counter.txt';
 
