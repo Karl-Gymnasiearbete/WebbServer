@@ -1,27 +1,50 @@
 const express = require('express');
+const fs = require('fs');
+const cookieParser = require('cookie-parser');
+const { v4: uuidv4 } = require('uuid');
 const app = express();
 
-app.use(express.static('public'));
-
-app.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
-});
-const fs = require('fs');
-
 const COUNTER_FILE = 'counter.txt';
+const VISITORS_FILE = 'visitors.json';
 
 app.use(express.static('public'));
+app.use(cookieParser());
 
 app.get('/visitors', (req, res) => {
-  let count = 0;
+  // Load seen visitors
+  let seen = [];
+  if (fs.existsSync(VISITORS_FILE)) {
+    seen = JSON.parse(fs.readFileSync(VISITORS_FILE, 'utf8'));
+  }
 
+  // Load count
+  let count = 0;
   if (fs.existsSync(COUNTER_FILE)) {
     count = parseInt(fs.readFileSync(COUNTER_FILE, 'utf8')) || 0;
   }
 
-  count++;
-  fs.writeFileSync(COUNTER_FILE, count.toString());
+  // Check if this visitor has a cookie
+  let userId = req.cookies.userId;
+  let isNew = false;
+
+  if (!userId || !seen.includes(userId)) {
+    // New visitor
+    userId = uuidv4();
+    isNew = true;
+    seen.push(userId);
+    count++;
+    fs.writeFileSync(VISITORS_FILE, JSON.stringify(seen));
+    fs.writeFileSync(COUNTER_FILE, count.toString());
+  }
+
+  // Set cookie for 1 year
+  res.cookie('userId', userId, { maxAge: 365 * 24 * 60 * 60 * 1000 });
   res.json({ count });
+});
+
+app.get('/datetime', (req, res) => {
+  const now = new Date();
+  res.json({ datetime: now.toLocaleString() });
 });
 
 app.listen(3000, () => console.log('Running on http://localhost:3000'));
