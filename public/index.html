@@ -7,7 +7,7 @@
   <title>My Website</title>
 </head>
 <body>
-  <h1>Hello, Ming!</h1>
+  <h1>Node.JS!</h1>
   <p>Visitors: <span id="count">...</span></p>
   <p>Date & Time: <span id="datetime">...</span></p>
 
@@ -31,26 +31,48 @@
 </div>
 
 <script>
- let current = 0;
-const track = document.querySelector('.slides-track'); // Spåret vi förflyttar
-const dots = document.querySelectorAll('.dot');
-const totalSlides = document.querySelectorAll('.slide').length;
+  // Hämta besökarantalet från servern och visa det på sidan
+  fetch('/visitors')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('count').textContent = data.count;
+    });
 
-// Förflyttar spåret åt sidan med CSS transform
-function showSlide(n) {
-  dots[current].classList.remove('active');
-  current = (n + totalSlides) % totalSlides; // Loopar runt
-  track.style.transform = `translateX(-${current * 100}%)`;
-  dots[current].classList.add('active');
-}
+  // Hämtar och visar aktuell tid från servern
+  function updateTime() {
+    fetch('/datetime')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('datetime').textContent = data.datetime;
+      });
+  }
 
-function changeSlide(n) {
-  showSlide(current + n);
-}
+  updateTime();                    // Kör direkt vid sidladdning
+  setInterval(updateTime, 1000);   // Uppdatera tiden varje sekund
 
-function goToSlide(n) {
-  showSlide(n);
-}
+  // --- Bildspel ---
+  let current = 0; // Index för den aktiva bilden
+  const slides = document.querySelectorAll('.slide'); // Alla bildrutor
+  const dots = document.querySelectorAll('.dot');     // Alla navigationsprickar
+
+  // Visar bilden med index n och uppdaterar aktiv prick
+  function showSlide(n) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = (n + slides.length) % slides.length; // Loopar runt om man går förbi slutet
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+  }
+
+  // Går framåt eller bakåt med +1 eller -1
+  function changeSlide(n) {
+    showSlide(current + n);
+  }
+
+  // Hoppar direkt till en specifik bild via prickarna
+  function goToSlide(n) {
+    showSlide(n);
+  }
 </script>
 </body>
 </html>
