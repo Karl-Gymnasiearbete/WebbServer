@@ -8,8 +8,8 @@
 </head>
 <body>
   <h1>Node.JS!</h1>
-  <p>Visitors: <span id="count">...</span></p>
-  <p>Date & Time: <span id="datetime">...</span></p>
+  <p>Antal unika besökare: <span id="count">...</span></p>
+  <p>Datum och tid: <span id="datetime">...</span></p>
 
   <!-- Bildspel -->
  <div class="slideshow">
@@ -56,12 +56,13 @@
   const dots = document.querySelectorAll('.dot');     // Alla navigationsprickar
 
   // Visar bilden med index n och uppdaterar aktiv prick
+  const track = document.querySelector('.slides-track');
+
   function showSlide(n) {
-    slides[current].classList.remove('active');
     dots[current].classList.remove('active');
-    current = (n + slides.length) % slides.length; // Loopar runt om man går förbi slutet
-    slides[current].classList.add('active');
+    current = (n + slides.length) % slides.length;
     dots[current].classList.add('active');
+    track.style.transform = `translateX(-${current * 100}%)`;
   }
 
   // Går framåt eller bakåt med +1 eller -1
