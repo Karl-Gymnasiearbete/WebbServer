@@ -1,7 +1,30 @@
 {
+  "name": "db-practice1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
-    "cookie-parser": "^1.4.7",
+    "bcrypt": "^6.0.0",
     "express": "^5.2.1",
-    "uuid": "^14.0.0"
-  }
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "dotenv": "^17.4.2",
+    "nodemon": "^3.1.14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Karl-Gymnasiearbete/WebbServer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Karl-Gymnasiearbete/WebbServer/issues"
+  },
+  "homepage": "https://github.com/Karl-Gymnasiearbete/WebbServer#readme"
 }

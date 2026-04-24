@@ -46,5 +46,7 @@ app.get('/datetime', (req, res) => {
   const now = new Date();
   res.json({ datetime: now.toLocaleString() });
 });
-
+app.get('/', (req, res) => {
+  res.send('Server is working!');
+});
 app.listen(3000, () => console.log('Running on http://localhost:3000'));
