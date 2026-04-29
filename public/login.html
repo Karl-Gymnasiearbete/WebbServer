@@ -1,0 +1,64 @@
+const express = require('express');
+const fs = require('fs');
+const cookieParser = require('cookie-parser');
+const { v4: uuidv4 } = require('uuid');
+
+const app = express();
+app.use(express.static(__dirname + '/public'));
+app.use(cookieParser());
+app.use(express.json());
+
+// Forward /login to dbserver
+app.post('/login', async (req, res) => {
+  try {
+    const response = await fetch('http://localhost:4000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+    const text = await response.text();
+    res.status(response.status).send(text);
+  } catch (err) {
+    console.error('DB server unreachable:', err.message);
+    res.sendStatus(503);
+  }
+});
+
+// Forward /createUser to dbserver
+app.post('/createUser', async (req, res) => {
+  try {
+    const response = await fetch('http://localhost:4000/createUser', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+    const text = await response.text();
+    res.status(response.status).send(text);
+  } catch (err) {
+    console.error('DB server unreachable:', err.message);
+    res.sendStatus(503);
+  }
+});
+
+app.get('/visitors', (req, res) => {
+  let seen = [];
+  if (fs.existsSync('visitors.json')) seen = JSON.parse(fs.readFileSync('visitors.json', 'utf8'));
+  let count = 0;
+  if (fs.existsSync('counter.txt')) count = parseInt(fs.readFileSync('counter.txt', 'utf8')) || 0;
+  let userId = req.cookies.userId;
+  if (!userId || !seen.includes(userId)) {
+    userId = uuidv4();
+    seen.push(userId);
+    count++;
+    fs.writeFileSync('visitors.json', JSON.stringify(seen));
+    fs.writeFileSync('counter.txt', count.toString());
+  }
+  res.cookie('userId', userId, { maxAge: 365 * 24 * 60 * 60 * 1000 });
+  res.json({ count });
+});
+
+app.get('/datetime', (req, res) => {
+  res.json({ datetime: new Date().toLocaleString() });
+});
+
+app.listen(3000, () => console.log('Website running on http://localhost:3000'));

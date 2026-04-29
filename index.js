@@ -1,53 +1,63 @@
-console.log("Bollar")
 const express = require('express');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const { v4: uuidv4 } = require('uuid');
+const mysql = require('mysql');
+const bcrypt = require('bcrypt');
+
 const app = express();
-
-const COUNTER_FILE = 'counter.txt';
-const VISITORS_FILE = 'visitors.json';
-
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
+app.use(express.json());
 
-app.get('/visitors', (req, res) => {
-  // Load seen visitors
-  let seen = [];
-  if (fs.existsSync(VISITORS_FILE)) {
-    seen = JSON.parse(fs.readFileSync(VISITORS_FILE, 'utf8'));
-  }
-
-  // Load count
-  let count = 0;
-  if (fs.existsSync(COUNTER_FILE)) {
-    count = parseInt(fs.readFileSync(COUNTER_FILE, 'utf8')) || 0;
-  }
-
-  // Check if this visitor has a cookie
-  let userId = req.cookies.userId;
-  let isNew = false;
-
-  if (!userId || !seen.includes(userId)) {
-    // New visitor
-    userId = uuidv4();
-    isNew = true;
-    seen.push(userId);
-    count++;
-    fs.writeFileSync(VISITORS_FILE, JSON.stringify(seen));
-    fs.writeFileSync(COUNTER_FILE, count.toString());
-  }
-
-  // Set cookie for 1 year
-  res.cookie('userId', userId, { maxAge: 365 * 24 * 60 * 60 * 1000 });
-  res.json({ count });
+const db = mysql.createPool({
+  connectionLimit: 100,
+  host: '127.0.0.1',
+  user: 'newuser',
+  password: 'password1#',
+  database: 'userDB',
+  port: '3306'
 });
 
-app.get('/datetime', (req, res) => {
-  const now = new Date();
-  res.json({ datetime: now.toLocaleString() });
+db.getConnection((err, connection) => {
+  if (err) {
+    console.error('DB connection failed:', err.message);
+    return;
+  }
+  console.log('DB connected: ' + connection.threadId);
+  connection.release();
 });
-app.get('/', (req, res) => {
-  res.send('Server is working!');
+
+app.post('/createUser', async (req, res) => {
+  const user = req.body.name;
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  db.getConnection(async (err, connection) => {
+    if (err) return res.sendStatus(500);
+    const search = mysql.format('SELECT * FROM userTable WHERE user = ?', [user]);
+    connection.query(search, async (err, result) => {
+      if (result.length !== 0) { connection.release(); return res.sendStatus(409); }
+      const insert = mysql.format('INSERT INTO userTable VALUES (0,?,?)', [user, hashedPassword]);
+      connection.query(insert, (err, result) => {
+        connection.release();
+        if (err) return res.sendStatus(500);
+        res.sendStatus(201);
+      });
+    });
+  });
 });
+
+app.post('/login', (req, res) => {
+  const { name, password } = req.body;
+  db.getConnection(async (err, connection) => {
+    if (err) return res.sendStatus(500);
+    const search = mysql.format('SELECT * FROM userTable WHERE user = ?', [name]);
+    connection.query(search, async (err, result) => {
+      connection.release();
+      if (result.length === 0) return res.sendStatus(404);
+      const match = await bcrypt.compare(password, result[0].password);
+      match ? res.json({ success: true, user: name }) : res.sendStatus(401);
+    });
+  });
+});
+
 app.listen(3000, () => console.log('Running on http://localhost:3000'));

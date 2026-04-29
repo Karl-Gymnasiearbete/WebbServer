@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>Register</title></head>
+<body>
+  <h2>Register</h2>
+  <input id="name" placeholder="Username" /><br/>
+  <input id="password" type="password" placeholder="Password" /><br/>
+  <button onclick="register()">Register</button>
+  <p id="msg"></p>
+
+  <script>
+    async function register() {
+      const res = await fetch('/createUser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('name').value,
+          password: document.getElementById('password').value
+        })
+      });
+      const msg = document.getElementById('msg');
+      if (res.status === 201) msg.textContent = 'Account created! Go to /login.html';
+      else if (res.status === 409) msg.textContent = 'User already exists.';
+      else msg.textContent = 'Error creating account.';
+    }
+  </script>
+</body>
+</html>
