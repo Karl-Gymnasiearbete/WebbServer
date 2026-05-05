@@ -4,10 +4,19 @@ const cookieParser = require('cookie-parser');
 const { v4: uuidv4 } = require('uuid');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
+
 const app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(cookieParser());
 app.use(express.json());
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 }
+}));
+
 const db = mysql.createPool({
   connectionLimit: 100,
   host: '127.0.0.1',
@@ -16,6 +25,7 @@ const db = mysql.createPool({
   database: 'userDB',
   port: '3306'
 });
+
 db.getConnection((err, connection) => {
   if (err) {
     console.error('DB connection failed:', err.message);
@@ -24,6 +34,7 @@ db.getConnection((err, connection) => {
   console.log('DB connected: ' + connection.threadId);
   connection.release();
 });
+
 app.post('/createUser', async (req, res) => {
   const user = req.body.name;
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -41,6 +52,7 @@ app.post('/createUser', async (req, res) => {
     });
   });
 });
+
 app.post('/login', (req, res) => {
   const { name, password } = req.body;
   db.getConnection(async (err, connection) => {
@@ -50,10 +62,29 @@ app.post('/login', (req, res) => {
       connection.release();
       if (result.length === 0) return res.sendStatus(404);
       const match = await bcrypt.compare(password, result[0].password);
-      match ? res.json({ success: true, user: name }) : res.sendStatus(401);
+      if (match) {
+        req.session.user = name;
+        res.json({ success: true, user: name });
+      } else {
+        res.sendStatus(401);
+      }
     });
   });
 });
+
+app.post('/logout', (req, res) => {
+  req.session.destroy();
+  res.json({ success: true });
+});
+
+app.get('/me', (req, res) => {
+  if (req.session.user) {
+    res.json({ user: req.session.user });
+  } else {
+    res.sendStatus(401);
+  }
+});
+
 app.get('/visitors', (req, res) => {
   let seen = [];
   if (fs.existsSync('visitors.json')) seen = JSON.parse(fs.readFileSync('visitors.json', 'utf8'));
@@ -70,7 +101,9 @@ app.get('/visitors', (req, res) => {
   res.cookie('userId', userId, { maxAge: 365 * 24 * 60 * 60 * 1000 });
   res.json({ count });
 });
+
 app.get('/datetime', (req, res) => {
   res.json({ datetime: new Date().toLocaleString() });
 });
+
 app.listen(3000, () => console.log('Running on http://localhost:3000'));
