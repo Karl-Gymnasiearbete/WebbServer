@@ -4,28 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <script src="/auth.js"></script>
   <title>VBeats</title>
 </head>
 <body>
   <header>
-    <a href="https://www.youtube.com/watch?v=Zo_QeYg1uf8&list=RDZo_QeYg1uf8&start_radio=1" target="_blank">
-      <img src="V_Beats_Logga.png" alt="VBeats">
-    </a>
+  <img src="V_Beats_Logga.png" alt="VBeats">
   <nav class="navbar">
     <a href="#" class="nav-link">Musik</a>
     <a href="#" class="nav-link">Om oss</a>
     <a href="#" class="nav-link">Forum</a>
     <div class="nav-spacer"></div>
-    <a href="login.html" class="nav-login">Logga in</a>
+    <a href="login.html" class="nav-login" id="nav-login-btn">Logga in</a>
   </nav>
 </header>
 <div class="fill"></div>
-<a href="https://youtu.be/X0-JkBCAc5E?si=62gq-gTEb5bwaVe-" target="_blank">
-  <h2>SNAKE EYES</h2>
-</a>
-<h1>🎶VBeats🎶</h1>
-<p>Antal unika besökare: <span id="count">...</span></p>
-<p>Tid och Datum: <span id="datetime">...</span></p>
+  <h1>🎶VBeats🎶</h1>
+  <p>Antal unika besökare: <span id="count">...</span></p>
+  <p>Datum och tid: <span id="datetime">...</span></p>
 
   <!-- Bildspel -->
  <div class="slideshow">
@@ -81,6 +77,18 @@
 </footer>
 
 <script>
+  // Check login and update nav button
+  checkLogin().then(user => {
+    const btn = document.getElementById('nav-login-btn');
+    if (user) {
+      btn.textContent = 'Min Profil';
+      btn.href = '/login.html';
+    } else {
+      btn.textContent = 'Logga in';
+      btn.href = '/login.html';
+    }
+  });
+
   // Hämta besökarantalet från servern och visa det på sidan
   fetch('/visitors')
     .then(res => res.json())
@@ -97,15 +105,13 @@
       });
   }
 
-  updateTime();                    // Kör direkt vid sidladdning
-  setInterval(updateTime, 1000);   // Uppdatera tiden varje sekund
+  updateTime();
+  setInterval(updateTime, 1000);
 
   // --- Bildspel ---
-  let current = 0; // Index för den aktiva bilden
-  const slides = document.querySelectorAll('.slide'); // Alla bildrutor
-  const dots = document.querySelectorAll('.dot');     // Alla navigationsprickar
-
-  // Visar bilden med index n och uppdaterar aktiv prick
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
   const track = document.querySelector('.slides-track');
 
   function showSlide(n) {
@@ -115,15 +121,13 @@
     track.style.transform = `translateX(-${current * 100}%)`;
   }
 
-  // Går framåt eller bakåt med +1 eller -1
   function changeSlide(n) {
     showSlide(current + n);
   }
 
-  // Hoppar direkt till en specifik bild via prickarna
   function goToSlide(n) {
     showSlide(n);
   }
 </script>
 </body>
-</html> 
+</html>

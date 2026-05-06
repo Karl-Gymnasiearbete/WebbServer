@@ -5,41 +5,59 @@ function App() {
   const [newThread, setNewThread] = useState("");
   const [selectedThread, setSelectedThread] = useState(null);
   const [reply, setReply] = useState("");
+  const [error, setError] = useState("");
 
-  // Hämta alla trådar när sidan laddas
   useEffect(() => {
-    fetch("http://localhost:3000/threads")
+    fetch("http://localhost:3000/threads", {
+      credentials: "include"
+    })
       .then(res => res.json())
       .then(data => setThreads(data))
       .catch(err => console.error(err));
   }, []);
 
-  // Skapa en ny tråd
   const createThread = (e) => {
     e.preventDefault();
+    setError("");
     fetch("http://localhost:3000/threads", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ title: newThread })
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status === 401) {
+          setError("Du måste vara inloggad för att skapa en tråd.");
+          return null;
+        }
+        return res.json();
+      })
       .then(data => {
+        if (!data) return;
         setThreads([data, ...threads]);
         setNewThread("");
       })
       .catch(err => console.error(err));
   };
 
-  // Skicka ett svar
   const sendReply = (e) => {
     e.preventDefault();
+    setError("");
     fetch(`http://localhost:3000/threads/${selectedThread.id}/replies`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ text: reply })
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status === 401) {
+          setError("Du måste vara inloggad för att svara.");
+          return null;
+        }
+        return res.json();
+      })
       .then(data => {
+        if (!data) return;
         setSelectedThread(data);
         setReply("");
       })
@@ -48,12 +66,12 @@ function App() {
 
   return (
     <div>
-      {/* Navigation */}
       <nav style={{ background: "#333", padding: "1rem", color: "white" }}>
         <h2>Threadify</h2>
       </nav>
 
-      {/* Om ingen tråd är vald - visa alla trådar */}
+      {error && <p style={{ color: "red", padding: "1rem" }}>{error}</p>}
+
       {!selectedThread ? (
         <main style={{ padding: "2rem" }}>
           <h2>Skapa en tråd</h2>
@@ -67,7 +85,6 @@ function App() {
             />
             <button type="submit">Skapa</button>
           </form>
-
           <h2>Alla trådar</h2>
           {threads.map(thread => (
             <div key={thread.id} style={{ border: "1px solid #ccc", margin: "1rem 0", padding: "1rem" }}>
@@ -79,11 +96,9 @@ function App() {
           ))}
         </main>
       ) : (
-        /* Om en tråd är vald - visa svar */
         <main style={{ padding: "2rem" }}>
           <button onClick={() => setSelectedThread(null)}>← Tillbaka</button>
           <h2>{selectedThread.title}</h2>
-
           <form onSubmit={sendReply}>
             <textarea
               rows={4}
@@ -94,7 +109,6 @@ function App() {
             />
             <button type="submit">Skicka</button>
           </form>
-
           <h3>Svar:</h3>
           {selectedThread.replies.map((r, index) => (
             <div key={index} style={{ border: "1px solid #ccc", margin: "1rem 0", padding: "1rem" }}>
