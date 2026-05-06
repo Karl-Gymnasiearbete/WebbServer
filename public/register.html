@@ -5,9 +5,9 @@
   <h2>Register</h2>
   <input id="name" placeholder="Username" /><br/>
   <input id="password" type="password" placeholder="Password" /><br/>
-  <button onclick="register()">Register</button>
+  <button onclick="register()">Registrera</button>
   <p id="msg"></p>
-
+  <p>Login <a href="/login.html">Logga in här</a></p>
   <script>
     async function register() {
       const res = await fetch('/createUser', {
