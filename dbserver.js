@@ -34,7 +34,7 @@ app.post('/createUser', async (req, res) => {
       if (result.length !== 0) { connection.release(); return res.sendStatus(409); }
       const insert = mysql.format('INSERT INTO userTable VALUES (0,?,?)', [user, hashedPassword]);
       connection.query(insert, (err, result) => {
-        connection.release();
+        connection.release();321q
         if (err) return res.sendStatus(500);
         res.sendStatus(201);
       });
