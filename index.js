@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
+const cors = require('cors');
 
 const app = express();
 app.use(express.static(__dirname + '/public'));
@@ -15,6 +16,10 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 1000 * 60 * 60 * 24 }
+}));
+app.use(cors({
+  origin: "http://localhost:3001",
+  credentials: true
 }));
 
 const db = mysql.createPool({
@@ -104,6 +109,37 @@ app.get('/visitors', (req, res) => {
 
 app.get('/datetime', (req, res) => {
   res.json({ datetime: new Date().toLocaleString() });
+});
+
+// Forum-trådar (sparas i minnet tills vidare)
+let threads = [];
+
+app.get('/threads', (req, res) => {
+  res.json(threads);
+});
+
+app.post('/threads', (req, res) => {
+  if (!req.session.user) return res.sendStatus(401);
+  const thread = {
+    id: uuidv4(),
+    title: req.body.title,
+    user: req.session.user,
+    replies: [],
+    likes: []
+  };
+  threads.unshift(thread);
+  res.json(thread);
+});
+
+app.post('/threads/:id/replies', (req, res) => {
+  if (!req.session.user) return res.sendStatus(401);
+  const thread = threads.find(t => t.id === req.params.id);
+  if (!thread) return res.sendStatus(404);
+  thread.replies.push({
+    user: req.session.user,
+    text: req.body.text
+  });
+  res.json(thread);
 });
 
 app.listen(3000, () => console.log('Running on http://localhost:3000'));
