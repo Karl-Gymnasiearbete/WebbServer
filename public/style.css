@@ -87,12 +87,22 @@ body {
   padding: 0;
   background-color: #FBF9FA;
 }
+body h2 {
+  color: #2B2024;
+  text-decoration: underline;
+  font-size: 5vw;
+  float: right;
+  padding-right: 13vw;
+  margin-top: 2.5vw;
+}
 body h1 {
+  color: #2B2024;
   font-size: 5vw;
   padding-top: 10vw;
   padding-left: 4vw;
 }
 body p {
+  color: #2B2024;
   padding-left: 4vw;
 }
 footer {
