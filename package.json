@@ -12,8 +12,11 @@
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "express": "^5.2.1",
-    "mysql": "^2.18.1"
+    "express-session": "^1.19.0",
+    "mysql": "^2.18.1",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "dotenv": "^17.4.2",

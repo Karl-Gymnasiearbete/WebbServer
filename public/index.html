@@ -4,24 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
-  <title>Node.js</title>
+  <title>VBeats</title>
 </head>
 <body>
   <header>
-    <img src="Nodejs logo.png" alt="NodejsLogo">
-  </header>
-  <h1>Node.JS</h1>
+  <img src="V_Beats_Logga.png" alt="VBeats">
+  <nav class="navbar">
+    <a href="#" class="nav-link">Musik</a>
+    <a href="#" class="nav-link">Om oss</a>
+    <a href="#" class="nav-link">Forum</a>
+    <div class="nav-spacer"></div>
+    <a href="login.html" class="nav-login">Logga in</a>
+  </nav>
+</header>
+<div class="fill"></div>
+  <h1>🎶VBeats🎶</h1>
   <p>Antal unika besökare: <span id="count">...</span></p>
   <p>Datum och tid: <span id="datetime">...</span></p>
 
   <!-- Bildspel -->
  <div class="slideshow">
-  <!-- Lägg till en slides-track som wrapper runt alla slides -->
   <div class="slides-track">
-    <div class="slide"><img src="Aurora.jpg" alt="Aurora"></div>
-    <div class="slide"><img src="Flower 3.jpg" alt="Blomma"></div>
-    <div class="slide"><img src="Moonlight.png" alt="Månljus"></div>
-    <div class="slide"><img src="Nebula-2.png" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-2-51.jpeg" alt="Snake eyes"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-0-34.jpeg" alt="Blomma"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-0-43.jpeg" alt="Månljus"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-0-50.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-1-08.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-1-09.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-1-16.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-1-28.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-1-42.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-2-01.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-2-08.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-2-13.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-2-14.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-2-31.jpeg" alt="Nebulosa"></div>
+    <div class="slide"><img src="SNAKE EYES - 0-2-59.jpeg" alt="Nebulosa"></div>
   </div>
   <button class="prev" onclick="changeSlide(-1)">&#8592;</button>
   <button class="next" onclick="changeSlide(1)">&#8594;</button>
@@ -30,8 +48,32 @@
     <span class="dot" onclick="goToSlide(1)"></span>
     <span class="dot" onclick="goToSlide(2)"></span>
     <span class="dot" onclick="goToSlide(3)"></span>
+    <span class="dot" onclick="goToSlide(4)"></span>
+    <span class="dot" onclick="goToSlide(5)"></span>
+    <span class="dot" onclick="goToSlide(6)"></span>
+    <span class="dot" onclick="goToSlide(7)"></span>
+    <span class="dot" onclick="goToSlide(8)"></span>
+    <span class="dot" onclick="goToSlide(9)"></span>
+    <span class="dot" onclick="goToSlide(10)"></span>
+    <span class="dot" onclick="goToSlide(11)"></span>
+    <span class="dot" onclick="goToSlide(12)"></span>
+    <span class="dot" onclick="goToSlide(13)"></span>
+    <span class="dot" onclick="goToSlide(14)"></span>
   </div>
 </div>
+<div class="fill"></div>
+<div class="fill-grill"></div>
+<div class="fill-grill"></div>
+<div class="fill-grill"></div>
+<div class="fill-grill"></div>
+<div class="fill-grill"></div>
+<div class="fill-grill"></div>
+<div class="fill-grill"></div>
+<div class="fill-grill"></div>
+
+<footer>
+  <b>Kontakt:</b>&nbsp;vbeats@gmail.com
+</footer>
 
 <script>
   // Hämta besökarantalet från servern och visa det på sidan
