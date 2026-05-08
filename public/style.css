@@ -3,6 +3,7 @@ html, body {
   max-width: 100%;
 }
 .slideshow {
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.5);
   float: right;
   position: relative;
   width: 600px;
@@ -11,6 +12,7 @@ html, body {
   margin-top: -20vw;
   overflow: hidden;
   border-radius: 10px;
+  background-color: 0,0,0,0;
 }
 .slides-track {
   display: flex;
@@ -87,6 +89,16 @@ body {
   padding: 0;
   background-color: #FBF9FA;
 }
+body h4 {
+  color: #2B2024;
+  font-size: 2.5vw;
+  padding-left: 4vw;
+}
+body h3 {
+  color: #2B2024;
+  padding-left: 4vw;
+  font-size: 2vw;
+}
 body h2 {
   color: #2B2024;
   text-decoration: underline;
@@ -98,7 +110,6 @@ body h2 {
 body h1 {
   color: #2B2024;
   font-size: 5vw;
-  padding-top: 10vw;
   padding-left: 4vw;
 }
 body p {
@@ -151,4 +162,31 @@ footer {
 }
 .nav-login:hover {
   background-color: #f0f0f0;
+}
+.content-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 10vw;
+  padding-bottom: 4vw;
+}
+
+.content-left {
+  flex: 1;
+}
+body h1 {
+  color: #2B2024;
+  font-size: 5vw;
+  padding-top: 4vw;
+  padding-left: 4vw;
+}
+.yuri-pic {
+  flex-shrink: 0;
+  width: 22vw;
+}
+.yuri-pic img {
+  width: 100%;
+  height: 22vw;
+  object-fit: cover;
+  border-radius: 8px;
 }
