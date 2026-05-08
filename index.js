@@ -31,6 +31,8 @@ const db = mysql.createPool({
   port: '3306'
 });
 
+let goonCounter = 1;
+
 db.getConnection((err, connection) => {
   if (err) {
     console.error('DB connection failed:', err.message);
@@ -140,30 +142,33 @@ app.get('/threads/:id', (req, res) => {
 });
 
 app.post('/threads', (req, res) => {
-  if (!req.session.user) return res.sendStatus(401);
+  const user = req.session.user || `Goon${goonCounter++}`;
   const id = uuidv4();
   db.getConnection((err, connection) => {
     if (err) return res.sendStatus(500);
     connection.query(
       'INSERT INTO threads (id, title, user) VALUES (?, ?, ?)',
-      [id, req.body.title, req.session.user],
+      [id, req.body.title, user],
       (err) => {
         connection.release();
-        if (err) return res.sendStatus(500);
-        res.json({ id, title: req.body.title, user: req.session.user, replies: [], replyCount: 0 });
+        if (err) {
+          console.error('Thread insert error:', err.message);
+          return res.sendStatus(500);
+        }
+        res.json({ id, title: req.body.title, user, replies: [], replyCount: 0 });
       }
     );
   });
 });
 
 app.post('/threads/:id/replies', (req, res) => {
-  if (!req.session.user) return res.sendStatus(401);
+  const user = req.session.user || `Goon${goonCounter++}`;
   const replyId = uuidv4();
   db.getConnection((err, connection) => {
     if (err) return res.sendStatus(500);
     connection.query(
       'INSERT INTO replies (id, thread_id, user, text) VALUES (?, ?, ?, ?)',
-      [replyId, req.params.id, req.session.user, req.body.text],
+      [replyId, req.params.id, user, req.body.text],
       (err) => {
         if (err) { connection.release(); return res.sendStatus(500); }
         connection.query('SELECT * FROM threads WHERE id = ?', [req.params.id], (err, threadResult) => {

@@ -7,44 +7,40 @@ function App() {
   const [reply, setReply] = useState("");
   const [error, setError] = useState("");
 
-useEffect(() => {
-  const fetchThreads = () => {
-    fetch("http://localhost:3000/threads")
-      .then(res => res.json())
-      .then(data => setThreads(data))
-      .catch(err => console.error(err));
-  };
+  useEffect(() => {
+    const fetchThreads = () => {
+      fetch("http://localhost:3000/threads", {
+        credentials: "include"
+      })
+        .then(res => res.json())
+        .then(data => setThreads(data))
+        .catch(err => console.error(err));
+    };
+    fetchThreads();
+    const interval = setInterval(fetchThreads, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
-  fetchThreads(); // hämta direkt när sidan laddas
-  const interval = setInterval(fetchThreads, 2000); // hämta var 2:a sekund
-
-  return () => clearInterval(interval); // städa upp när sidan stängs
-}, []);
-
-  const createThread = (e) => {
-    e.preventDefault();
-    setError("");
-    fetch("http://localhost:3000/threads", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ title: newThread })
+const createThread = (e) => {
+  e.preventDefault();
+  setError("");
+  fetch("http://localhost:3000/threads", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ title: newThread })
+  })
+    .then(res => {
+      console.log("Status:", res.status);
+      return res.json();
     })
-      .then(res => {
-        if (res.status === 401) {
-          setError("Du måste vara inloggad för att skapa en tråd.");
-          return null;
-        }
-        return res.json();
-      })
-      .then(data => {
-        if (!data) return;
-        setThreads([data, ...threads]);
-        setNewThread("");
-      })
-      .catch(err => console.error(err));
-  };
-
+    .then(data => {
+      console.log("Response:", data);
+      setThreads([data, ...threads]);
+      setNewThread("");
+    })
+    .catch(err => console.error("Error:", err));
+};
   const openThread = (thread) => {
     fetch(`http://localhost:3000/threads/${thread.id}`, {
       credentials: "include"
@@ -63,15 +59,8 @@ useEffect(() => {
       credentials: "include",
       body: JSON.stringify({ text: reply })
     })
-      .then(res => {
-        if (res.status === 401) {
-          setError("Du måste vara inloggad för att svara.");
-          return null;
-        }
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
-        if (!data) return;
         setSelectedThread(data);
         setReply("");
       })
@@ -138,4 +127,4 @@ useEffect(() => {
   );
 }
 
-export default App
+export default App;
