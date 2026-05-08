@@ -31,8 +31,6 @@ const db = mysql.createPool({
   port: '3306'
 });
 
-let goonCounter = 1;
-
 db.getConnection((err, connection) => {
   if (err) {
     console.error('DB connection failed:', err.message);
@@ -142,7 +140,16 @@ app.get('/threads/:id', (req, res) => {
 });
 
 app.post('/threads', (req, res) => {
-  const user = req.session.user || `Goon${goonCounter++}`;
+  let user = req.session.user;
+  if (!user) {
+    if (!req.cookies.guestId) {
+      const guestNum = Date.now();
+      res.cookie('guestId', `Guest${guestNum}`, { maxAge: 365 * 24 * 60 * 60 * 1000 });
+      user = `Guest${guestNum}`;
+    } else {
+      user = req.cookies.guestId;
+    }
+  }
   const id = uuidv4();
   db.getConnection((err, connection) => {
     if (err) return res.sendStatus(500);
@@ -162,7 +169,16 @@ app.post('/threads', (req, res) => {
 });
 
 app.post('/threads/:id/replies', (req, res) => {
-  const user = req.session.user || `Goon${goonCounter++}`;
+  let user = req.session.user;
+  if (!user) {
+    if (!req.cookies.guestId) {
+      const guestNum = Date.now();
+      res.cookie('guestId', `Guest${guestNum}`, { maxAge: 365 * 24 * 60 * 60 * 1000 });
+      user = `Guest${guestNum}`;
+    } else {
+      user = req.cookies.guestId;
+    }
+  }
   const replyId = uuidv4();
   db.getConnection((err, connection) => {
     if (err) return res.sendStatus(500);
