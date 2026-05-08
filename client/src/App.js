@@ -7,14 +7,19 @@ function App() {
   const [reply, setReply] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetch("http://localhost:3000/threads", {
-      credentials: "include"
-    })
+useEffect(() => {
+  const fetchThreads = () => {
+    fetch("http://localhost:3000/threads")
       .then(res => res.json())
       .then(data => setThreads(data))
       .catch(err => console.error(err));
-  }, []);
+  };
+
+  fetchThreads(); // hämta direkt när sidan laddas
+  const interval = setInterval(fetchThreads, 2000); // hämta var 2:a sekund
+
+  return () => clearInterval(interval); // städa upp när sidan stängs
+}, []);
 
   const createThread = (e) => {
     e.preventDefault();
@@ -37,6 +42,15 @@ function App() {
         setThreads([data, ...threads]);
         setNewThread("");
       })
+      .catch(err => console.error(err));
+  };
+
+  const openThread = (thread) => {
+    fetch(`http://localhost:3000/threads/${thread.id}`, {
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(data => setSelectedThread(data))
       .catch(err => console.error(err));
   };
 
@@ -89,8 +103,9 @@ function App() {
           {threads.map(thread => (
             <div key={thread.id} style={{ border: "1px solid #ccc", margin: "1rem 0", padding: "1rem" }}>
               <p>{thread.title}</p>
-              <button onClick={() => setSelectedThread(thread)}>
-                Svar ({thread.replies.length})
+              <p style={{ opacity: "0.5" }}>av {thread.user}</p>
+              <button onClick={() => openThread(thread)}>
+                Svar ({thread.replyCount})
               </button>
             </div>
           ))}
@@ -99,6 +114,7 @@ function App() {
         <main style={{ padding: "2rem" }}>
           <button onClick={() => setSelectedThread(null)}>← Tillbaka</button>
           <h2>{selectedThread.title}</h2>
+          <p style={{ opacity: "0.5" }}>av {selectedThread.user}</p>
           <form onSubmit={sendReply}>
             <textarea
               rows={4}
@@ -122,4 +138,4 @@ function App() {
   );
 }
 
-export default App;
+export default App
