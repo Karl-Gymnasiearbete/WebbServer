@@ -118,28 +118,6 @@ app.get('/threads', (req, res) => {
   res.json(threads);
 });
 
-app.post('/threads', (req, res) => {
-  if (!req.session.user) return res.sendStatus(401);
-  const thread = {
-    id: uuidv4(),
-    title: req.body.title,
-    user: req.session.user,
-    replies: [],
-    likes: []
-  };
-  threads.unshift(thread);
-  res.json(thread);
-});
 
-app.post('/threads/:id/replies', (req, res) => {
-  if (!req.session.user) return res.sendStatus(401);
-  const thread = threads.find(t => t.id === req.params.id);
-  if (!thread) return res.sendStatus(404);
-  thread.replies.push({
-    user: req.session.user,
-    text: req.body.text
-  });
-  res.json(thread);
-});
 
 app.listen(3000, () => console.log('Running on http://localhost:3000'));
