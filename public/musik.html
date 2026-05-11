@@ -5,94 +5,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <title>Musik</title>
+  <style>
+    .video-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 1rem;
+    }
+    .video-wrapper iframe {
+      width: 100%;
+      max-width: 560px;
+      height: 315px;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    @media (max-width: 600px) {
+      .video-wrapper iframe {
+        height: 220px;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
-    <a href="https://www.youtube.com/watch?v=Zo_QeYg1uf8" target="_blank">
+    <a href="index.html">
       <img src="V_Beats_Logga.png" alt="VBeats">
     </a>
-  <nav class="navbar">
-    <a href="musik.html" class="nav-link">Musik</a>
-    <a href="omOss.html" class="nav-link">Om oss</a>
-    <a href="http://localhost:3001" class="nav-link">Forum</a>
-    <div class="nav-spacer"></div>
-    <a href="login.html" class="nav-login">Logga in</a>
-  </nav>
-</header>
-<div class="fill"></div>
-<a href="musik.html" target="_blank">
-  <h2>SNAKE EYES</h2>
-</a>
-<h1>🎶MUSIK🎶</h1> 
+    <nav class="navbar">
+      <a href="musik.html" class="nav-link">Musik</a>
+      <a href="omOss.html" class="nav-link">Om oss</a>
+      <a href="http://localhost:3001" class="nav-link">Forum</a>
+      <div class="nav-spacer"></div>
+      <a href="login.html" class="nav-login" id="nav-login-btn">Logga in</a>
+    </nav>
+  </header>
 
-  <div style="display: flex; justify-content: center; margin: 2rem 0;">
-  <iframe 
-    width="560" 
-    height="315" 
-    src="https://www.youtube.com/embed/X0-JkBCAc5E" 
-    title="SNAKE EYES" 
-    frameborder="0" 
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-    allowfullscreen>
-  </iframe>
-</div>
-<div class="fill"></div>
-<div class="fill-grill"></div>
-<div class="fill-grill"></div>
-<div class="fill-grill"></div>
-<div class="fill-grill"></div>
-<div class="fill-grill"></div>
-<div class="fill-grill"></div>
-<div class="fill-grill"></div>
+  <div class="fill"></div>
 
-<footer>
-  <b>Kontakt:</b>&nbsp;info@vbeats.jp
-</footer>
+  <h1>🎶MUSIK🎶</h1>
 
-<script>
-  // Hämta besökarantalet från servern och visa det på sidan
-  fetch('/visitors')
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('count').textContent = data.count;
+  <div class="video-wrapper">
+    <iframe
+      src="https://www.youtube.com/embed/X0-JkBCAc5E"
+      title="SNAKE EYES"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="fill"></div>
+  <div class="fill-grill"></div>
+  <div class="fill-grill"></div>
+  <div class="fill-grill"></div>
+  <div class="fill-grill"></div>
+  <div class="fill-grill"></div>
+  <div class="fill-grill"></div>
+  <div class="fill-grill"></div>
+
+  <footer>
+    <b>Kontakt:</b>&nbsp;info@vbeats.jp
+  </footer>
+
+  <script src="/auth.js"></script>
+  <script>
+    checkLogin().then(user => {
+      const btn = document.getElementById('nav-login-btn');
+      if (user) {
+        btn.textContent = 'Min Profil';
+      } else {
+        btn.textContent = 'Logga in';
+      }
+      btn.href = '/login.html';
     });
-
-  // Hämtar och visar aktuell tid från servern
-  function updateTime() {
-    fetch('/datetime')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('datetime').textContent = data.datetime;
-      });
-  }
-
-  updateTime();                    // Kör direkt vid sidladdning
-  setInterval(updateTime, 1000);   // Uppdatera tiden varje sekund
-
-  // --- Bildspel ---
-  let current = 0; // Index för den aktiva bilden
-  const slides = document.querySelectorAll('.slide'); // Alla bildrutor
-  const dots = document.querySelectorAll('.dot');     // Alla navigationsprickar
-
-  // Visar bilden med index n och uppdaterar aktiv prick
-  const track = document.querySelector('.slides-track');
-
-  function showSlide(n) {
-    dots[current].classList.remove('active');
-    current = (n + slides.length) % slides.length;
-    dots[current].classList.add('active');
-    track.style.transform = `translateX(-${current * 100}%)`;
-  }
-
-  // Går framåt eller bakåt med +1 eller -1
-  function changeSlide(n) {
-    showSlide(current + n);
-  }
-
-  // Hoppar direkt till en specifik bild via prickarna
-  function goToSlide(n) {
-    showSlide(n);
-  }
-</script>
+  </script>
 </body>
-</html> 
+</html>
