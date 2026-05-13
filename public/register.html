@@ -1,31 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <title>Register</title>
+  <style>
+    #register-form {
+      padding: clamp(1rem, 5vw, 3rem) clamp(1rem, 5vw, 4rem);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+    #register-form h4 {
+      font-size: clamp(1.8rem, 4vw, 4rem);
+      font-weight: 700;
+      color: #2B2024;
+      margin: 0 0 1rem 0;
+    }
+    #register-form input {
+      width: clamp(180px, 40vw, 18vw);
+      padding: clamp(0.4rem, 1vw, 0.6rem) clamp(0.6rem, 1.5vw, 1rem);
+      font-size: clamp(0.85rem, 1.5vw, 1rem);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      color: #2B2024;
+      background-color: #fff;
+      transition: border-color 0.2s;
+    }
+    #register-form input:focus {
+      border-color: #FD0054;
+    }
+    #register-form button {
+      padding: clamp(0.4rem, 1vw, 0.5rem) clamp(1rem, 2vw, 1.5rem);
+      font-size: clamp(0.85rem, 1.5vw, 1rem);
+      font-weight: 600;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #FD0054;
+      color: #FBF9FA;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    #register-form button:hover {
+      background-color: #a80038;
+    }
+    #register-form p {
+      font-size: clamp(0.8rem, 1.5vw, 1rem);
+      color: #2B2024;
+      padding: 0;
+      margin: 0;
+    }
+    #register-form p a {
+      color: #FD0054;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 2px solid #FD0054;
+      transition: opacity 0.2s;
+    }
+    #register-form p a:hover {
+      opacity: 0.7;
+    }
+    #msg {
+      color: #FD0054;
+      font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+      margin: 0;
+    }
+    @media (max-width: 600px) {
+      header {
+        max-height: none;
+        padding: 0.5rem;
+      }
+      header img {
+        max-width: 60px;
+      }
+      .nav-link {
+        font-size: 0.85rem;
+      }
+      #register-form input {
+        width: 80vw;
+      }
+    }
+  </style>
 </head>
 <body>
-
-<header>
+  <header>
     <a href="index.html">
       <img src="V_Beats_Logga.png" alt="VBeats">
     </a>
-  <nav class="navbar">
-    <a href="musik.html" class="nav-link">Musik</a>
-    <a href="omOss.html" class="nav-link">Om oss</a>
-    <a href="http://localhost:3001" class="nav-link">Forum</a>
-    <div class="nav-spacer"></div>
-  </nav>
-</header>
+    <nav class="navbar">
+      <a href="musik.html" class="nav-link">Musik</a>
+      <a href="omOss.html" class="nav-link">Om oss</a>
+      <a href="http://localhost:3001" class="nav-link">Forum</a>
+      <div class="nav-spacer"></div>
+    </nav>
+  </header>
 
- <div id="register-form">
-  <h4>Register</h4>
-  <input id="name" placeholder="Username" />
-  <input id="password" type="password" placeholder="Password" />
-  <button onclick="register()">Registrera</button>
-  <p id="msg"></p>
-  <p>Login <a href="/login.html">Logga in här</a></p>
-</div>
+  <div class="fill"></div>
+
+  <div id="register-form">
+    <h4>Register</h4>
+    <input id="name" placeholder="Username" />
+    <input id="password" type="password" placeholder="Password" />
+    <button onclick="register()">Registrera</button>
+    <p id="msg"></p>
+    <p>Har du ett konto? <a href="/login.html">Logga in här</a></p>
+  </div>
+
+  <footer>
+    <b>Kontakt:</b>&nbsp;info@vbeats.jp
+  </footer>
+
   <script>
     async function register() {
       const res = await fetch('/createUser', {
@@ -37,9 +126,11 @@
         })
       });
       const msg = document.getElementById('msg');
-      if (res.status === 201) msg.textContent = 'Account created! Go to /login.html';
-      else if (res.status === 409) msg.textContent = 'User already exists.';
-      else msg.textContent = 'Error creating account.';
+      if (res.status === 201) {
+        msg.textContent = 'Konto skapat! Omdirigerar...';
+        setTimeout(() => window.location.href = '/login.html', 1500);
+      } else if (res.status === 409) msg.textContent = 'Användarnamnet finns redan.';
+      else msg.textContent = 'Något gick fel.';
     }
   </script>
 </body>
