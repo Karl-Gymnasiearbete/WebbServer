@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./index.css";
 
 function App() {
   const [threads, setThreads] = useState([]);
@@ -21,26 +22,23 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-const createThread = (e) => {
-  e.preventDefault();
-  setError("");
-  fetch("http://localhost:3000/threads", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ title: newThread })
-  })
-    .then(res => {
-      console.log("Status:", res.status);
-      return res.json();
+  const createThread = (e) => {
+    e.preventDefault();
+    setError("");
+    fetch("http://localhost:3000/threads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ title: newThread })
     })
-    .then(data => {
-      console.log("Response:", data);
-      setThreads([data, ...threads]);
-      setNewThread("");
-    })
-    .catch(err => console.error("Error:", err));
-};
+      .then(res => res.json())
+      .then(data => {
+        setThreads([data, ...threads]);
+        setNewThread("");
+      })
+      .catch(err => console.error("Error:", err));
+  };
+
   const openThread = (thread) => {
     fetch(`http://localhost:3000/threads/${thread.id}`, {
       credentials: "include"
@@ -69,56 +67,75 @@ const createThread = (e) => {
 
   return (
     <div>
-      <nav style={{ background: "#333", padding: "1rem", color: "white" }}>
-        <h2>Threadify</h2>
+      <nav className="navbar">
+        <a href="http://localhost:3000">
+          <img src="http://localhost:3000/V_Beats_Logga.png" alt="VBeats" />
+        </a>
+        <div className="navbar-links">
+          <a href="http://localhost:3000/musik.html" className="nav-link">Musik</a>
+          <a href="http://localhost:3000/omOss.html" className="nav-link">Om oss</a>
+          <a href="http://localhost:3001" className="nav-link">Forum</a>
+        </div>
+        <div className="nav-spacer"></div>
+        <a href="http://localhost:3000/login.html" className="nav-login">Logga in</a>
       </nav>
 
-      {error && <p style={{ color: "red", padding: "1rem" }}>{error}</p>}
+      <div className="fill"></div>
+
+      {error && <p className="error">{error}</p>}
 
       {!selectedThread ? (
-        <main style={{ padding: "2rem" }}>
-          <h2>Skapa en tråd</h2>
-          <form onSubmit={createThread}>
-            <input
-              type="text"
-              placeholder="Skriv din tråd..."
-              value={newThread}
-              onChange={(e) => setNewThread(e.target.value)}
-              required
-            />
-            <button type="submit">Skapa</button>
-          </form>
-          <h2>Alla trådar</h2>
+        <main className="main">
+          <div className="create-box">
+            <h2>Skapa en tråd</h2>
+            <form className="create-form" onSubmit={createThread}>
+              <input
+                className="create-input"
+                type="text"
+                placeholder="Skriv din tråd..."
+                value={newThread}
+                onChange={(e) => setNewThread(e.target.value)}
+                required
+              />
+              <button className="create-btn" type="submit">Skapa</button>
+            </form>
+          </div>
+
+          <h2 className="threads-title">Alla trådar</h2>
           {threads.map(thread => (
-            <div key={thread.id} style={{ border: "1px solid #ccc", margin: "1rem 0", padding: "1rem" }}>
-              <p>{thread.title}</p>
-              <p style={{ opacity: "0.5" }}>av {thread.user}</p>
-              <button onClick={() => openThread(thread)}>
+            <div key={thread.id} className="thread-card">
+              <p className="thread-title">{thread.title}</p>
+              <p className="thread-user">av {thread.user}</p>
+              <button className="reply-btn" onClick={() => openThread(thread)}>
                 Svar ({thread.replyCount})
               </button>
             </div>
           ))}
         </main>
       ) : (
-        <main style={{ padding: "2rem" }}>
-          <button onClick={() => setSelectedThread(null)}>← Tillbaka</button>
-          <h2>{selectedThread.title}</h2>
-          <p style={{ opacity: "0.5" }}>av {selectedThread.user}</p>
-          <form onSubmit={sendReply}>
-            <textarea
-              rows={4}
-              placeholder="Skriv ett svar..."
-              value={reply}
-              onChange={(e) => setReply(e.target.value)}
-              required
-            />
-            <button type="submit">Skicka</button>
-          </form>
-          <h3>Svar:</h3>
+        <main className="main">
+          <button className="back-btn" onClick={() => setSelectedThread(null)}>← Tillbaka</button>
+          <div className="create-box">
+            <h2>{selectedThread.title}</h2>
+            <p className="thread-user">av {selectedThread.user}</p>
+            <form className="reply-form" onSubmit={sendReply}>
+              <textarea
+                className="reply-input"
+                rows={4}
+                placeholder="Skriv ett svar..."
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+                required
+              />
+              <button className="create-btn" type="submit">Skicka</button>
+            </form>
+          </div>
+
+          <h3 className="threads-title">Svar:</h3>
           {selectedThread.replies.map((r, index) => (
-            <div key={index} style={{ border: "1px solid #ccc", margin: "1rem 0", padding: "1rem" }}>
-              <p>{r.text}</p>
-              <p style={{ opacity: "0.5" }}>av {r.user}</p>
+            <div key={index} className="thread-card">
+              <p className="thread-title">{r.text}</p>
+              <p className="thread-user">av {r.user}</p>
             </div>
           ))}
         </main>
